@@ -1,5 +1,6 @@
 package com.smartbiz.smartbiz_api.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,11 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-
-    private String password;
-    private String name;
+public class AuthDto {
     private String email;
-    private String role;
+    private String password;
+
 
 }
