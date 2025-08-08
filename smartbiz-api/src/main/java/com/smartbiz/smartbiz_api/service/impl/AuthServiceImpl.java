@@ -1,6 +1,7 @@
 package com.smartbiz.smartbiz_api.service.impl;
 
 import com.smartbiz.smartbiz_api.dto.AuthDto;
+import com.smartbiz.smartbiz_api.dto.AuthResponse;
 import com.smartbiz.smartbiz_api.dto.UserDto;
 import com.smartbiz.smartbiz_api.entity.User;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
@@ -35,13 +36,10 @@ public class AuthServiceImpl implements AuthService {
         return "User registered successfully!";
     }
 
-    public String login(AuthDto request) {
+    public AuthResponse login(AuthDto request) {
         User user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-//        if (!user.getPassword().equals(request.getPassword())) {
-//            throw new RuntimeException("Invalid credentials");
-//        }
 
         boolean passwordMatch = PasswordUtil.matches(request.getPassword(), user.getPassword());
 
@@ -49,7 +47,9 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid password");
         }
         // Generate JWT token
-        return jwtUtil.generateToken(user.getEmail(), user.getRole());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        return new AuthResponse(token, user.getRole());
+
     }
 
 
