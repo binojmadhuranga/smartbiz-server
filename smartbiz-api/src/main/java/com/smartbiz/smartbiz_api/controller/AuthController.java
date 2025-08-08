@@ -22,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthDto request) {
-        String token = authService.login(request);
-        return new AuthResponse(token);
+        return authService.login(request);
+
     }
 }
