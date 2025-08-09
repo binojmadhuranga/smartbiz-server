@@ -1,7 +1,7 @@
 package com.smartbiz.smartbiz_api.service.impl;
 
 import com.smartbiz.smartbiz_api.dto.AuthDto;
-import com.smartbiz.smartbiz_api.dto.AuthResponse;
+import com.smartbiz.smartbiz_api.dto.AuthResponseDto;
 import com.smartbiz.smartbiz_api.dto.UserDto;
 import com.smartbiz.smartbiz_api.entity.User;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         return "User registered successfully!";
     }
 
-    public AuthResponse login(AuthDto request) {
+    public AuthResponseDto login(AuthDto request) {
         User user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         }
         // Generate JWT token
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-        return new AuthResponse(token, user.getRole());
+        return new AuthResponseDto(token, user.getRole());
 
     }
 

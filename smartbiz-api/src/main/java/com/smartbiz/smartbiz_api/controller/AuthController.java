@@ -1,7 +1,7 @@
 package com.smartbiz.smartbiz_api.controller;
 
 import com.smartbiz.smartbiz_api.dto.AuthDto;
-import com.smartbiz.smartbiz_api.dto.AuthResponse;
+import com.smartbiz.smartbiz_api.dto.AuthResponseDto;
 import com.smartbiz.smartbiz_api.dto.UserDto;
 import com.smartbiz.smartbiz_api.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthDto request) {
+    public AuthResponseDto login(@RequestBody AuthDto request) {
         return authService.login(request);
 
     }
