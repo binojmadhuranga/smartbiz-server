@@ -1,6 +1,5 @@
 package com.smartbiz.smartbiz_api.service.impl;
 
-
 import com.smartbiz.smartbiz_api.dto.ItemDto;
 import com.smartbiz.smartbiz_api.entity.Item;
 import com.smartbiz.smartbiz_api.repo.ItemRepo;
@@ -63,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteById(id);
     }
 
-    // Helper mapping method
+
     private ItemDto mapToDto(Item item) {
         return ItemDto.builder()
                 .itemId(item.getItemId())
@@ -71,12 +70,12 @@ public class ItemServiceImpl implements ItemService {
                 .description(item.getDescription())
                 .build();
     }
-
-    private Item mapToEntity(ItemDto dto) {
-        return Item.builder()
-                .itemId(dto.getItemId()) // will be null for new items
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .build();
-    }
+//
+//    private Item mapToEntity(ItemDto dto) {
+//        return Item.builder()
+//                .itemId(dto.getItemId()) // will be null for new items
+//                .name(dto.getName())
+//                .description(dto.getDescription())
+//                .build();
+//    }
 }
