@@ -31,14 +31,42 @@ public class JwtUtil {
                 .compact();
     }
 
+//    public boolean validateJwtToken(String authToken) {
+//        String jwtToken = authToken.substring("Bearer ".length());
+//        try {
+//            Jwts.parser().setSigningKey(getSigningKey()).build().parse(jwtToken);
+//            return true;
+//        } catch (Exception e) {
+//            System.out.println("Invalid JWT token: {}" + e.getMessage());
+//        }
+//        return false;
+//    }
+
     public boolean validateJwtToken(String authToken) {
-        String jwtToken = authToken.substring("Bearer ".length());
         try {
-            Jwts.parser().setSigningKey(getSigningKey()).build().parse(jwtToken);
+            String jwtToken = authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
+            Jwts.parser()
+                    .verifyWith((javax.crypto.SecretKey) getSigningKey())
+                    .build()
+                    .parseSignedClaims(jwtToken);
             return true;
-        } catch (Exception e) {
-            System.out.println("Invalid JWT token: {}" + e.getMessage());
+        } catch (JwtException e) {
+            System.out.println("Invalid JWT token: " + e.getMessage());
+            return false;
         }
-        return false;
+    }
+
+    public Claims getClaimsFromToken(String authToken) {
+        try {
+            String jwtToken = authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
+            return Jwts.parser()
+                    .verifyWith((javax.crypto.SecretKey) getSigningKey())
+                    .build()
+                    .parseSignedClaims(jwtToken)
+                    .getPayload();
+        } catch (JwtException e) {
+            System.out.println("Failed to parse JWT claims: " + e.getMessage());
+            return null;
+        }
     }
 }
