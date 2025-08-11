@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.controller;
 import com.smartbiz.smartbiz_api.dto.SupplierDto;
 import com.smartbiz.smartbiz_api.service.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,28 +16,33 @@ public class SupplierController {
     private final SupplierService supplierService;
 
     @PostMapping
-    public SupplierDto createSupplier(@RequestBody SupplierDto supplierDto) {
-        return supplierService.createSupplier(supplierDto);
+    public ResponseEntity<SupplierDto> createSupplier(@RequestBody SupplierDto supplierDto) {
+        SupplierDto created = supplierService.createSupplier(supplierDto);
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping("/{id}")
-    public SupplierDto getSupplier(@PathVariable Long id) {
-        return supplierService.getSupplierById(id);
+    public ResponseEntity<SupplierDto> getSupplier(@PathVariable Long id) {
+        SupplierDto supplier = supplierService.getSupplierById(id);
+        return ResponseEntity.ok(supplier);
     }
 
     @GetMapping
-    public List<SupplierDto> getAllSuppliers() {
-        return supplierService.getAllSuppliers();
+    public ResponseEntity<List<SupplierDto>> getAllSuppliers() {
+        List<SupplierDto> list = supplierService.getAllSuppliers();
+        return ResponseEntity.ok(list);
     }
 
     @PutMapping("/{id}")
-    public SupplierDto updateSupplier(@PathVariable Long id, @RequestBody SupplierDto supplierDto) {
-        return supplierService.updateSupplier(id, supplierDto);
+    public ResponseEntity<SupplierDto> updateSupplier(@PathVariable Long id, @RequestBody SupplierDto supplierDto) {
+        SupplierDto updated = supplierService.updateSupplier(id, supplierDto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSupplier(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSupplier(@PathVariable Long id) {
         supplierService.deleteSupplier(id);
+        return ResponseEntity.noContent().build();
     }
 
 
