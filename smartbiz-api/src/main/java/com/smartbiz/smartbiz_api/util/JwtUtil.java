@@ -56,6 +56,7 @@ public class JwtUtil {
         }
     }
 
+
     public Claims getClaimsFromToken(String authToken) {
         try {
             String jwtToken = authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
