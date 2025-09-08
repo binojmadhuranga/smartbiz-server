@@ -70,12 +70,5 @@ public class ItemServiceImpl implements ItemService {
                 .description(item.getDescription())
                 .build();
     }
-//
-//    private Item mapToEntity(ItemDto dto) {
-//        return Item.builder()
-//                .itemId(dto.getItemId()) // will be null for new items
-//                .name(dto.getName())
-//                .description(dto.getDescription())
-//                .build();
-//    }
+
 }
