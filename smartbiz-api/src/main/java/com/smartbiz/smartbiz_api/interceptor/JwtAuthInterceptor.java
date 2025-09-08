@@ -1,5 +1,4 @@
 package com.smartbiz.smartbiz_api.interceptor;
-
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
