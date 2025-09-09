@@ -8,6 +8,7 @@ public interface ItemService {
     ItemDto getItemById(Long id);
     ItemDto updateItem(Long id, ItemDto itemDto);
     void deleteItem(Long id);
+    List<ItemDto> searchItemsByName(String name);
 
 
 

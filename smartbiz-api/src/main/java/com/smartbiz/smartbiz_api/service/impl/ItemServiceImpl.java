@@ -63,6 +63,14 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteById(id);
     }
 
+    @Override
+    public List<ItemDto> searchItemsByName(String name) {
+        return itemRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
 
     // ===== Helper methods =====
     private ItemDto mapToDto(Item item) {

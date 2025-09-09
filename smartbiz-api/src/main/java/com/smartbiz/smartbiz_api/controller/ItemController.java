@@ -41,5 +41,12 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ItemDto>> searchItems(@RequestParam("name") String name) {
+        return ResponseEntity.ok(itemService.searchItemsByName(name));
+    }
+
+
+
 
 }
