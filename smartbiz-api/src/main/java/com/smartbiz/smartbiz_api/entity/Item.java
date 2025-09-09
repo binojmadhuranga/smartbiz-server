@@ -24,4 +24,11 @@ public class Item {
 
     private String description;
 
+    private Integer quantity;
+
+    private Double unitSellingPrice;
+
+    private Double unitBuyingPrice;
+
+
 }

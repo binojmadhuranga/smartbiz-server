@@ -19,10 +19,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto itemDto) {
-        Item item = Item.builder()
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .build();
+        Item item = mapToEntity(itemDto);
         Item saved = itemRepository.save(item);
         return mapToDto(saved);
     }
@@ -49,10 +46,14 @@ public class ItemServiceImpl implements ItemService {
 
         existingItem.setName(itemDto.getName());
         existingItem.setDescription(itemDto.getDescription());
+        existingItem.setQuantity(itemDto.getQuantity());
+        existingItem.setUnitSellingPrice(itemDto.getUnitSellingPrice());
+        existingItem.setUnitBuyingPrice(itemDto.getUnitBuyingPrice());
 
         Item updated = itemRepository.save(existingItem);
         return mapToDto(updated);
     }
+
 
     @Override
     public void deleteItem(Long id) {
@@ -63,12 +64,26 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
+    // ===== Helper methods =====
     private ItemDto mapToDto(Item item) {
         return ItemDto.builder()
                 .itemId(item.getItemId())
                 .name(item.getName())
                 .description(item.getDescription())
+                .quantity(item.getQuantity())
+                .unitSellingPrice(item.getUnitSellingPrice())
+                .unitBuyingPrice(item.getUnitBuyingPrice())
                 .build();
     }
 
+    private Item mapToEntity(ItemDto dto) {
+        return Item.builder()
+                .itemId(dto.getItemId())
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .quantity(dto.getQuantity())
+                .unitSellingPrice(dto.getUnitSellingPrice())
+                .unitBuyingPrice(dto.getUnitBuyingPrice())
+                .build();
+    }
 }
