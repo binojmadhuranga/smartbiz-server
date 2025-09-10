@@ -22,25 +22,18 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(String email, String role) {
-        return Jwts.builder().subject(email)
+    public String generateToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey()) // Algorithm inferred from key
                 .compact();
     }
 
-//    public boolean validateJwtToken(String authToken) {
-//        String jwtToken = authToken.substring("Bearer ".length());
-//        try {
-//            Jwts.parser().setSigningKey(getSigningKey()).build().parse(jwtToken);
-//            return true;
-//        } catch (Exception e) {
-//            System.out.println("Invalid JWT token: {}" + e.getMessage());
-//        }
-//        return false;
-//    }
+
 
     public boolean validateJwtToken(String authToken) {
         try {
@@ -64,10 +57,47 @@ public class JwtUtil {
                     .verifyWith((javax.crypto.SecretKey) getSigningKey())
                     .build()
                     .parseSignedClaims(jwtToken)
-                    .getPayload();
+                    .getBody();
         } catch (JwtException e) {
             System.out.println("Failed to parse JWT claims: " + e.getMessage());
             return null;
         }
     }
+
+    // ===== Extract userId =====
+    public Long extractUserId(String authToken) {
+        Claims claims = getClaimsFromToken(authToken);
+        if (claims != null && claims.get("userId") != null) {
+            return Long.valueOf(claims.get("userId").toString());
+        }
+        return null;
+    }
+
+    // ===== Extract email =====
+    public String extractEmail(String authToken) {
+        Claims claims = getClaimsFromToken(authToken);
+        if (claims != null) {
+            return claims.getSubject();
+        }
+        return null;
+    }
+
+    // ===== Extract role =====
+    public String extractRole(String authToken) {
+        Claims claims = getClaimsFromToken(authToken);
+        if (claims != null && claims.get("role") != null) {
+            return claims.get("role").toString();
+        }
+        return null;
+    }
+
+    // ===== Check if token is expired =====
+    public boolean isTokenExpired(String authToken) {
+        Claims claims = getClaimsFromToken(authToken);
+        if (claims != null) {
+            return claims.getExpiration().before(new Date());
+        }
+        return true; // treat invalid token as expired
+    }
+
 }
