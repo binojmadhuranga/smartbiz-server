@@ -8,6 +8,7 @@ public interface SupplierService {
     SupplierDto createSupplier(SupplierDto supplierDto);
     SupplierDto getSupplierById(Long id);
     List<SupplierDto> getAllSuppliers();
+    List<SupplierDto> getSuppliersByUserId(Long userId);
     SupplierDto updateSupplier(Long id, SupplierDto supplierDto);
     void deleteSupplier(Long id);
 }
