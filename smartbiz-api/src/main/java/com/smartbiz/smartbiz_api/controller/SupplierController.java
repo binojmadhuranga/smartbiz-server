@@ -17,6 +17,10 @@ public class SupplierController {
 
     @PostMapping
     public ResponseEntity<SupplierDto> createSupplier(@RequestBody SupplierDto supplierDto) {
+        // Ensure userId is provided in DTO
+        if (supplierDto.getUserId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
         SupplierDto created = supplierService.createSupplier(supplierDto);
         return ResponseEntity.ok(created);
     }
@@ -33,8 +37,18 @@ public class SupplierController {
         return ResponseEntity.ok(list);
     }
 
+    // Get suppliers by user (for user dashboard)
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SupplierDto>> getSuppliersByUser(@PathVariable Long userId) {
+        List<SupplierDto> list = supplierService.getSuppliersByUserId(userId);
+        return ResponseEntity.ok(list);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<SupplierDto> updateSupplier(@PathVariable Long id, @RequestBody SupplierDto supplierDto) {
+        if (supplierDto.getUserId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
         SupplierDto updated = supplierService.updateSupplier(id, supplierDto);
         return ResponseEntity.ok(updated);
     }
