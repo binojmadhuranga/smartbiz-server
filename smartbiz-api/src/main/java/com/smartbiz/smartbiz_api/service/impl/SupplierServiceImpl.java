@@ -23,6 +23,7 @@ public class SupplierServiceImpl implements SupplierService {
                 .email(supplier.getEmail())
                 .phone(supplier.getPhone())
                 .address(supplier.getAddress())
+                .userId(supplier.getUserId())
                 .build();
     }
 
@@ -33,11 +34,15 @@ public class SupplierServiceImpl implements SupplierService {
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .address(dto.getAddress())
+                .userId(dto.getUserId())
                 .build();
     }
 
     @Override
     public SupplierDto createSupplier(SupplierDto supplierDto) {
+        if (supplierDto.getUserId() == null) {
+            throw new IllegalArgumentException("UserId must be provided");
+        }
         Supplier supplier = mapToEntity(supplierDto);
         Supplier savedSupplier = supplierRepo.save(supplier);
         return mapToDto(savedSupplier);
@@ -59,6 +64,14 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    public List<SupplierDto> getSuppliersByUserId(Long userId) {
+        return supplierRepo.findByUserId(userId)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public SupplierDto updateSupplier(Long id, SupplierDto supplierDto) {
         Supplier existingSupplier = supplierRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
@@ -67,6 +80,11 @@ public class SupplierServiceImpl implements SupplierService {
         existingSupplier.setEmail(supplierDto.getEmail());
         existingSupplier.setPhone(supplierDto.getPhone());
         existingSupplier.setAddress(supplierDto.getAddress());
+
+        // Update userId if provided
+        if (supplierDto.getUserId() != null) {
+            existingSupplier.setUserId(supplierDto.getUserId());
+        }
 
         Supplier updatedSupplier = supplierRepo.save(existingSupplier);
         return mapToDto(updatedSupplier);
