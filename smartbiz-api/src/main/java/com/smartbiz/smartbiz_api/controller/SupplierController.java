@@ -63,4 +63,12 @@ public class SupplierController {
         return ResponseEntity.ok(supplier.getItemIds().stream().toList());
     }
 
+    @GetMapping("/user/{userId}/search")
+    public ResponseEntity<List<SupplierDto>> searchSuppliersByName(
+            @PathVariable Long userId,
+            @RequestParam String name) {
+        List<SupplierDto> suppliers = supplierService.searchSuppliersByName(userId, name);
+        return ResponseEntity.ok(suppliers);
+    }
+
 }

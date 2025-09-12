@@ -11,4 +11,7 @@ public interface SupplierService {
     List<SupplierDto> getSuppliersByUserId(Long userId);
     SupplierDto updateSupplier(Long id, SupplierDto supplierDto);
     void deleteSupplier(Long id);
+    List<SupplierDto> searchSuppliersByName(Long userId, String name);
+
+
 }

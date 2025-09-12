@@ -122,6 +122,17 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<SupplierDto> searchSuppliersByName(Long userId, String name) {
+        List<Supplier> suppliers = supplierRepo.findByUserIdAndNameContainingIgnoreCase(userId, name);
+        return suppliers.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+
+
+    @Override
     @org.springframework.transaction.annotation.Transactional
     public void deleteSupplier(Long id) {
         supplierRepo.deleteById(id);
