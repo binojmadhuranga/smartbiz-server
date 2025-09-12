@@ -36,7 +36,6 @@ public class Supplier {
             joinColumns = @JoinColumn(name = "supplier_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
+    @Builder.Default
     private Set<Item> items = new HashSet<>();
-
-
 }

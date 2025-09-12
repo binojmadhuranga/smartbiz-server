@@ -66,6 +66,20 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
+    // Get all items for a specific user (by userId)
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ItemDto>> getItemsByUserId(@PathVariable Long userId,
+                                                          HttpServletRequest request) {
+        // Optional: validate that the logged-in user is allowed to see this user's items
+        Long loggedInUserId = getUserId(request); // extract from JWT
+        if (!loggedInUserId.equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+
+        List<ItemDto> items = itemService.getAllItems(userId);
+        return ResponseEntity.ok(items);
+    }
+
 
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItems(@RequestParam("name") String name,

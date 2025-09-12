@@ -23,9 +23,11 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     private SupplierDto mapToDto(Supplier supplier) {
-        // defensive copy to avoid concurrent modification while Hibernate finalizes loading
-        Set<Item> itemsCopy = new HashSet<>(supplier.getItems());
-        Set<Long> itemIds = itemsCopy.stream()
+        Set<Item> itemsRaw = supplier.getItems();
+        if (itemsRaw == null) {
+            itemsRaw = java.util.Collections.emptySet();
+        }
+        Set<Long> itemIds = itemsRaw.stream()
                 .map(Item::getItemId)
                 .collect(Collectors.toSet());
 
