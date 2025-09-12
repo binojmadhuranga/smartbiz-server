@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -32,5 +35,9 @@ public class Item {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+    @ManyToMany(mappedBy = "items")
+    @JsonIgnore
+    private Set<Supplier> suppliers = new HashSet<>();
 
 }

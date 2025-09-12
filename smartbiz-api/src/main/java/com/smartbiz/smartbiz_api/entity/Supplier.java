@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -26,4 +29,14 @@ public class Supplier {
 
     @Column(nullable = false)
     private Long userId;
+
+    @ManyToMany
+    @JoinTable(
+            name = "supplier_items",
+            joinColumns = @JoinColumn(name = "supplier_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    private Set<Item> items = new HashSet<>();
+
+
 }
