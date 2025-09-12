@@ -17,7 +17,6 @@ public class SupplierController {
 
     @PostMapping
     public ResponseEntity<SupplierDto> createSupplier(@RequestBody SupplierDto supplierDto) {
-        // Ensure userId is provided in DTO
         if (supplierDto.getUserId() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -37,7 +36,6 @@ public class SupplierController {
         return ResponseEntity.ok(list);
     }
 
-    // Get suppliers by user (for user dashboard)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<SupplierDto>> getSuppliersByUser(@PathVariable Long userId) {
         List<SupplierDto> list = supplierService.getSuppliersByUserId(userId);
@@ -59,5 +57,10 @@ public class SupplierController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{id}/items")
+    public ResponseEntity<List<Long>> getItemsForSupplier(@PathVariable Long id) {
+        SupplierDto supplier = supplierService.getSupplierById(id);
+        return ResponseEntity.ok(supplier.getItemIds().stream().toList());
+    }
 
 }

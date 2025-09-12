@@ -66,6 +66,7 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
+
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItems(@RequestParam("name") String name,
                                                      HttpServletRequest request) {
@@ -73,5 +74,11 @@ public class ItemController {
         return ResponseEntity.ok(itemService.searchItemsByName(name, userId));
     }
 
+    @GetMapping("/{id}/suppliers")
+    public ResponseEntity<List<Long>> getSuppliersForItem(@PathVariable Long id, HttpServletRequest request) {
+        Long userId = getUserId(request);
+        ItemDto item = itemService.getItemById(id, userId);
+        return ResponseEntity.ok(item.getSupplierIds().stream().toList());
+    }
 
 }
