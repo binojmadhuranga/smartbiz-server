@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.ItemDto;
 import com.smartbiz.smartbiz_api.dto.SupplierDto; // added
 import com.smartbiz.smartbiz_api.dto.ItemWithSuppliersDto; // new import
+import com.smartbiz.smartbiz_api.dto.SupplierItemDto;
 import com.smartbiz.smartbiz_api.entity.Item;
 import com.smartbiz.smartbiz_api.entity.Supplier;
 import com.smartbiz.smartbiz_api.entity.User;
@@ -158,17 +159,45 @@ public class ItemServiceImpl implements ItemService {
 
     // ===== Helper methods =====
     private ItemDto mapToDto(Item item) {
-        Set<Supplier> suppliersCopy = Optional.ofNullable(item.getSuppliers())
-                .map(suppliers -> {
-                    Hibernate.initialize(suppliers);
-                    return new HashSet<>(suppliers);
+        Set<Supplier> suppliers = Optional.ofNullable(item.getSuppliers())
+                .map(s -> {
+                    Hibernate.initialize(s);
+                    return new HashSet<>(s);
                 })
                 .orElseGet(HashSet::new);
 
-        Set<Long> supplierIds = suppliersCopy.stream()
+        // Collect supplier IDs for convenience
+        Set<Long> supplierIds = suppliers.stream()
                 .map(Supplier::getSupplierId)
                 .collect(Collectors.toSet());
 
+        // Map suppliers to SupplierDto including item info with supplier info
+        List<SupplierDto> supplierDtos = suppliers.stream()
+                .map(supplier -> {
+                    Set<SupplierItemDto> items = Optional.ofNullable(supplier.getItems())
+                            .orElse(Collections.emptySet())
+                            .stream()
+                            .map(i -> new SupplierItemDto(
+                                    i.getItemId(),
+                                    i.getName(),
+                                    supplier.getSupplierId(),
+                                    supplier.getName()
+                            ))
+                            .collect(Collectors.toSet());
+
+                    return SupplierDto.builder()
+                            .supplierId(supplier.getSupplierId())
+                            .name(supplier.getName())
+                            .email(supplier.getEmail())
+                            .phone(supplier.getPhone())
+                            .address(supplier.getAddress())
+                            .userId(supplier.getUserId())
+                            .items(items) // each item has itemId, itemName, supplierId, supplierName
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // Build and return ItemDto
         return ItemDto.builder()
                 .itemId(item.getItemId())
                 .name(item.getName())
@@ -177,21 +206,7 @@ public class ItemServiceImpl implements ItemService {
                 .unitSellingPrice(item.getUnitSellingPrice())
                 .unitBuyingPrice(item.getUnitBuyingPrice())
                 .supplierIds(supplierIds)
-                .suppliers(suppliersCopy.stream()
-                        .map(s -> SupplierDto.builder()
-                                .supplierId(s.getSupplierId())
-                                .name(s.getName())
-                                .email(s.getEmail())
-                                .phone(s.getPhone())
-                                .address(s.getAddress())
-                                .userId(s.getUserId())
-                                .itemIds(Optional.ofNullable(s.getItems())
-                                        .orElse(Collections.emptySet())
-                                        .stream()
-                                        .map(Item::getItemId)
-                                        .collect(Collectors.toSet()))
-                                .build())
-                        .collect(Collectors.toList()))
+                .suppliers(supplierDtos)
                 .build();
     }
 
