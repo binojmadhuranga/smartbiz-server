@@ -1,6 +1,7 @@
 package com.smartbiz.smartbiz_api.controller;
 
 import com.smartbiz.smartbiz_api.dto.ItemDto;
+import com.smartbiz.smartbiz_api.dto.SupplierDto; // added
 import com.smartbiz.smartbiz_api.service.ItemService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -89,10 +90,10 @@ public class ItemController {
     }
 
     @GetMapping("/{id}/suppliers")
-    public ResponseEntity<List<Long>> getSuppliersForItem(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<List<SupplierDto>> getSuppliersForItem(@PathVariable Long id, HttpServletRequest request) {
         Long userId = getUserId(request);
         ItemDto item = itemService.getItemById(id, userId);
-        return ResponseEntity.ok(item.getSupplierIds().stream().toList());
+        return ResponseEntity.ok(item.getSuppliers());
     }
 
 }

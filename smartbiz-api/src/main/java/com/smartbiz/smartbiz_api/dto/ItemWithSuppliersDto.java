@@ -4,23 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Set;
-import java.util.List;
 
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ItemDto {
+public class ItemWithSuppliersDto {
     private Long itemId;
     private String name;
     private String description;
     private Integer quantity;
     private Double unitSellingPrice;
     private Double unitBuyingPrice;
-
-    private Set<Long> supplierIds;
-    private List<SupplierDto> suppliers;
-
+    private List<String> supplierNames; // only names for lightweight listing
 }
+
