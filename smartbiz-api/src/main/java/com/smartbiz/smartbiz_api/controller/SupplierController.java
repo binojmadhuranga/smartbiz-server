@@ -58,9 +58,10 @@ public class SupplierController {
     }
 
     @GetMapping("/{id}/items")
-    public ResponseEntity<List<Long>> getItemsForSupplier(@PathVariable Long id) {
+    public ResponseEntity<List<String>> getItemsForSupplier(@PathVariable Long id) {
         SupplierDto supplier = supplierService.getSupplierById(id);
-        return ResponseEntity.ok(supplier.getItemIds().stream().toList());
+        return ResponseEntity.ok
+                (supplier.getItemNames().stream().toList());
     }
 
     @GetMapping("/user/{userId}/search")
