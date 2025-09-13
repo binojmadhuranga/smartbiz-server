@@ -23,9 +23,11 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     private SupplierDto mapToDto(Supplier supplier) {
-        // defensive copy to avoid concurrent modification while Hibernate finalizes loading
-        Set<Item> itemsCopy = new HashSet<>(supplier.getItems());
-        Set<Long> itemIds = itemsCopy.stream()
+        Set<Item> itemsRaw = supplier.getItems();
+        if (itemsRaw == null) {
+            itemsRaw = java.util.Collections.emptySet();
+        }
+        Set<Long> itemIds = itemsRaw.stream()
                 .map(Item::getItemId)
                 .collect(Collectors.toSet());
 
@@ -120,6 +122,17 @@ public class SupplierServiceImpl implements SupplierService {
         Supplier updatedSupplier = supplierRepo.save(existingSupplier);
         return mapToDto(updatedSupplier);
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<SupplierDto> searchSuppliersByName(Long userId, String name) {
+        List<Supplier> suppliers = supplierRepo.findByUserIdAndNameContainingIgnoreCase(userId, name);
+        return suppliers.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     @org.springframework.transaction.annotation.Transactional

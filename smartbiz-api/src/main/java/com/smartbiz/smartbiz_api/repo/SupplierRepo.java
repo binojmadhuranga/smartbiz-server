@@ -13,13 +13,10 @@ public interface SupplierRepo extends JpaRepository<Supplier, Long> {
     @EntityGraph(attributePaths = {"items"})
     List<Supplier> findByUserId(Long userId);
 
-    // ✅ Get suppliers that provide a specific item (fetch items in one query)
-    @EntityGraph(attributePaths = {"items"})
-    List<Supplier> findByItems_ItemId(Long itemId);
+    // New method for search
+    List<Supplier> findByUserIdAndNameContainingIgnoreCase(Long userId, String name);
 
-    // ✅ Alternative: explicit JOIN FETCH to avoid N+1
-    @Query("SELECT DISTINCT s FROM Supplier s JOIN FETCH s.items i WHERE i.itemId = :itemId")
-    List<Supplier> findSuppliersWithItemsByItemId(@Param("itemId") Long itemId);
+
 
 
 

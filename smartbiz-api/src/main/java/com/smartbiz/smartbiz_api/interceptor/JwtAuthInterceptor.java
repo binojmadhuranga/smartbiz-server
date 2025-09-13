@@ -37,12 +37,17 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // optional: attach claims for downstream controllers
+        // attach claims + userId
         Claims claims = jwtUtil.getClaimsFromToken(authHeader);
-        request.setAttribute("email", claims.getSubject());
-        Object role = claims.get("role");
-        request.setAttribute("role", role != null ? role.toString() : null);
-
+        if (claims != null) {
+            request.setAttribute("email", claims.getSubject());
+            Object role = claims.get("role");
+            request.setAttribute("role", role != null ? role.toString() : null);
+            Object userId = claims.get("userId");
+            if (userId != null) {
+                try { request.setAttribute("userId", Long.valueOf(userId.toString())); } catch (NumberFormatException ignored) {}
+            }
+        }
         return true; // proceed to controller
     }
 }
