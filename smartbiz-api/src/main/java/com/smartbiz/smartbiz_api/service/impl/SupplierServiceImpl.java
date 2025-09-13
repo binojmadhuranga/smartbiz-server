@@ -30,6 +30,9 @@ public class SupplierServiceImpl implements SupplierService {
         Set<Long> itemIds = itemsRaw.stream()
                 .map(Item::getItemId)
                 .collect(Collectors.toSet());
+        Set<String> itemNames = itemsRaw.stream()
+                .map(Item::getName)
+                .collect(Collectors.toSet());
 
         return SupplierDto.builder()
                 .supplierId(supplier.getSupplierId())
@@ -39,6 +42,7 @@ public class SupplierServiceImpl implements SupplierService {
                 .address(supplier.getAddress())
                 .userId(supplier.getUserId())
                 .itemIds(itemIds)
+                .itemNames(itemNames)
                 .build();
     }
 
