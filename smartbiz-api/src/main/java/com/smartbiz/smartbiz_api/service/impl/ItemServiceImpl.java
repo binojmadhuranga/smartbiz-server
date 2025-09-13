@@ -1,8 +1,7 @@
 package com.smartbiz.smartbiz_api.service.impl;
 
 import com.smartbiz.smartbiz_api.dto.ItemDto;
-import com.smartbiz.smartbiz_api.dto.SupplierDto; // added
-import com.smartbiz.smartbiz_api.dto.ItemWithSuppliersDto; // new import
+import com.smartbiz.smartbiz_api.dto.SupplierDto;
 import com.smartbiz.smartbiz_api.entity.Item;
 import com.smartbiz.smartbiz_api.entity.Supplier;
 import com.smartbiz.smartbiz_api.entity.User;
@@ -13,16 +12,15 @@ import com.smartbiz.smartbiz_api.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // added
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
-import java.util.Collections; // for emptySet
+import java.util.Collections;
 import com.smartbiz.smartbiz_api.exception.NotFoundException;
-import com.smartbiz.smartbiz_api.exception.ForbiddenException;
-import java.util.Objects; // added
+import java.util.Objects;
 
 
 @Service
@@ -53,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
         // update owning side (Supplier.items) so join table rows are created
         if (!suppliers.isEmpty()) {
             for (Supplier s : suppliers) {
-                s.getItems().add(saved);
+                s.getItems().add(saved); // owning side
             }
             supplierRepo.saveAll(suppliers);
         }
@@ -130,45 +128,38 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ItemWithSuppliersDto> getItemsWithSuppliers(Long userId) {
-        return itemRepository.findByUser_Id(userId)
-                .stream()
-                .map(item -> {
-                    Set<Supplier> supps = Optional.ofNullable(item.getSuppliers())
-                            .map(s -> { Hibernate.initialize(s); return s; })
-                            .orElse(Collections.emptySet());
-                    List<String> supplierNames = supps.stream()
-                            .map(Supplier::getName)
-                            .filter(Objects::nonNull)
-                            .sorted()
-                            .collect(Collectors.toList());
-                    return ItemWithSuppliersDto.builder()
-                            .itemId(item.getItemId())
-                            .name(item.getName())
-                            .description(item.getDescription())
-                            .quantity(item.getQuantity())
-                            .unitSellingPrice(item.getUnitSellingPrice())
-                            .unitBuyingPrice(item.getUnitBuyingPrice())
-                            .supplierNames(supplierNames)
-                            .build();
-                })
-                .collect(Collectors.toList());
-    }
-
     // ===== Helper methods =====
     private ItemDto mapToDto(Item item) {
-        Set<Supplier> suppliersCopy = Optional.ofNullable(item.getSuppliers())
-                .map(suppliers -> {
-                    Hibernate.initialize(suppliers);
-                    return new HashSet<>(suppliers);
-                })
+        Set<Supplier> suppliers = Optional.ofNullable(item.getSuppliers())
+                .map(s -> { Hibernate.initialize(s); return new HashSet<>(s); })
                 .orElseGet(HashSet::new);
 
-        Set<Long> supplierIds = suppliersCopy.stream()
+        // Collect supplier IDs for convenience
+        Set<Long> supplierIds = suppliers.stream()
                 .map(Supplier::getSupplierId)
                 .collect(Collectors.toSet());
 
+        // Map suppliers to SupplierDto including item info with supplier info
+        List<SupplierDto> supplierDtos = suppliers.stream()
+                .map(supplier -> {
+                    Set<Long> itemIds = Optional.ofNullable(supplier.getItems())
+                            .orElse(Collections.emptySet())
+                            .stream()
+                            .map(Item::getItemId)
+                            .collect(Collectors.toSet());
+                    return SupplierDto.builder()
+                            .supplierId(supplier.getSupplierId())
+                            .name(supplier.getName())
+                            .email(supplier.getEmail())
+                            .phone(supplier.getPhone())
+                            .address(supplier.getAddress())
+                            .userId(supplier.getUserId())
+                            .itemIds(itemIds)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // Build and return ItemDto
         return ItemDto.builder()
                 .itemId(item.getItemId())
                 .name(item.getName())
@@ -177,21 +168,7 @@ public class ItemServiceImpl implements ItemService {
                 .unitSellingPrice(item.getUnitSellingPrice())
                 .unitBuyingPrice(item.getUnitBuyingPrice())
                 .supplierIds(supplierIds)
-                .suppliers(suppliersCopy.stream()
-                        .map(s -> SupplierDto.builder()
-                                .supplierId(s.getSupplierId())
-                                .name(s.getName())
-                                .email(s.getEmail())
-                                .phone(s.getPhone())
-                                .address(s.getAddress())
-                                .userId(s.getUserId())
-                                .itemIds(Optional.ofNullable(s.getItems())
-                                        .orElse(Collections.emptySet())
-                                        .stream()
-                                        .map(Item::getItemId)
-                                        .collect(Collectors.toSet()))
-                                .build())
-                        .collect(Collectors.toList()))
+                .suppliers(supplierDtos)
                 .build();
     }
 

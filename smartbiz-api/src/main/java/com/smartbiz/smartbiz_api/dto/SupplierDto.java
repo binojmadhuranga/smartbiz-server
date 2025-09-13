@@ -20,4 +20,5 @@ public class SupplierDto {
 
     private Long userId;
     private Set<Long> itemIds;
+    private Set<String> itemNames;
 }
