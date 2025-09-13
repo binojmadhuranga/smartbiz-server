@@ -1,6 +1,7 @@
 package com.smartbiz.smartbiz_api.controller;
 
 import com.smartbiz.smartbiz_api.dto.ItemDto;
+import com.smartbiz.smartbiz_api.dto.SupplierDto; // added
 import com.smartbiz.smartbiz_api.service.ItemService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,6 +67,20 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
+    // Get all items for a specific user (by userId)
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ItemDto>> getItemsByUserId(@PathVariable Long userId,
+                                                          HttpServletRequest request) {
+        // Optional: validate that the logged-in user is allowed to see this user's items
+        Long loggedInUserId = getUserId(request); // extract from JWT
+        if (!loggedInUserId.equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+
+        List<ItemDto> items = itemService.getAllItems(userId);
+        return ResponseEntity.ok(items);
+    }
+
 
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItems(@RequestParam("name") String name,
@@ -75,10 +90,10 @@ public class ItemController {
     }
 
     @GetMapping("/{id}/suppliers")
-    public ResponseEntity<List<Long>> getSuppliersForItem(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<List<SupplierDto>> getSuppliersForItem(@PathVariable Long id, HttpServletRequest request) {
         Long userId = getUserId(request);
         ItemDto item = itemService.getItemById(id, userId);
-        return ResponseEntity.ok(item.getSupplierIds().stream().toList());
+        return ResponseEntity.ok(item.getSuppliers());
     }
 
 }

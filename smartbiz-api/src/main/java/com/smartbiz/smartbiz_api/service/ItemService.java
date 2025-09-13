@@ -1,5 +1,6 @@
 package com.smartbiz.smartbiz_api.service;
 import com.smartbiz.smartbiz_api.dto.ItemDto;
+import com.smartbiz.smartbiz_api.dto.ItemWithSuppliersDto; // added
 import java.util.List;
 
 public interface ItemService {
@@ -9,8 +10,5 @@ public interface ItemService {
     ItemDto updateItem(Long itemId, ItemDto itemDto, Long userId);
     void deleteItem(Long itemId, Long userId);
     List<ItemDto> searchItemsByName(String name, Long userId);
-
-
-
-
+    List<ItemWithSuppliersDto> getItemsWithSuppliers(Long userId); // new
 }
