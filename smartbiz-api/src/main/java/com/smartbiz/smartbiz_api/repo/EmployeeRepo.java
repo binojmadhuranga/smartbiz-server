@@ -8,6 +8,6 @@ import java.util.Optional;
 
 
 public interface EmployeeRepo extends JpaRepository<Employee, Long> {
-    Optional<Employee> findByEmail(String email);     //Future use for seracrh function...
+
     List<Employee> findByUserId(Long userId);
 }
