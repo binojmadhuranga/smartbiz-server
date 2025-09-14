@@ -93,6 +93,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeDto> searchEmployeesByName(String name, Long userId) {
+        List<Employee> employees = employeeRepository.findByUserIdAndNameContainingIgnoreCase(userId, name);
+        return employees.stream()
+                .map(this::mapToDto)
+                .toList();
+
+    }
+
+
+    @Override
     public void deleteEmployee(Long id, Long userId) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
