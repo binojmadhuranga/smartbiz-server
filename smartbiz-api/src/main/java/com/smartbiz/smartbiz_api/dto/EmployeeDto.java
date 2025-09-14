@@ -15,5 +15,6 @@ public class EmployeeDto {
     private String role;
     private Double salary;
     private String email;
+    private Long userId;
 
 }

@@ -5,11 +5,14 @@ import com.smartbiz.smartbiz_api.dto.EmployeeDto;
 import java.util.List;
 
 public interface EmployeeService {
+    EmployeeDto addEmployee(EmployeeDto employeeDto, Long userId);
 
-    EmployeeDto addEmployee(EmployeeDto employeeDto);
-    List<EmployeeDto> getAllEmployees();
-    EmployeeDto getEmployeeById(Long id);
-    EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto);
-    void deleteEmployee(Long id);
+    List<EmployeeDto> getAllEmployeesByUser(Long userId);
+
+    EmployeeDto getEmployeeById(Long id, Long userId);
+
+    EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto, Long userId);
+
+    void deleteEmployee(Long id, Long userId);
 
 }
