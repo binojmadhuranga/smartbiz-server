@@ -50,6 +50,14 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.updateEmployee(id, dto, userId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeDto>> searchEmployeesByName(@RequestParam String name,
+                                                                   HttpServletRequest request) {
+        Long userId = getUserId(request);
+        return ResponseEntity.ok(employeeService.searchEmployeesByName(name, userId));
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id,
                                                HttpServletRequest request) {
