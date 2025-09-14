@@ -30,7 +30,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .build();
     }
 
+
     private Employee mapToEntity(EmployeeDto dto, User user) {
+
         return Employee.builder()
                 .employeeId(dto.getEmployeeId())
                 .name(dto.getName())
@@ -87,6 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee updated = employeeRepository.save(employee);
         return mapToDto(updated);
+
     }
 
     @Override
@@ -100,4 +103,5 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeRepository.delete(employee);
     }
+
 }
