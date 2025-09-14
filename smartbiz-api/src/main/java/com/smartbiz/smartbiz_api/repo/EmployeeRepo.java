@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface EmployeeRepo extends JpaRepository<Employee, Long> {
 
     List<Employee> findByUserId(Long userId);
+
+    List<Employee> findByUserIdAndNameContainingIgnoreCase(Long userId, String name);
+
 }
