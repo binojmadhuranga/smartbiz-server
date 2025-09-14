@@ -1,0 +1,104 @@
+package com.smartbiz.smartbiz_api.service.impl;
+
+import com.smartbiz.smartbiz_api.dto.EmployeeDto;
+import com.smartbiz.smartbiz_api.entity.Employee;
+import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.repo.EmployeeRepo;
+import com.smartbiz.smartbiz_api.repo.UserRepo;
+import com.smartbiz.smartbiz_api.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepo employeeRepository;
+    private final UserRepo userRepository;
+
+    private EmployeeDto mapToDto(Employee employee) {
+        return EmployeeDto.builder()
+                .employeeId(employee.getEmployeeId())
+                .name(employee.getName())
+                .role(employee.getRole())
+                .salary(employee.getSalary())
+                .email(employee.getEmail())
+                .userId(employee.getUser().getId())
+                .build();
+    }
+
+    private Employee mapToEntity(EmployeeDto dto,User user) {
+        return Employee.builder()
+                .employeeId(dto.getEmployeeId())
+                .name(dto.getName())
+                .role(dto.getRole())
+                .salary(dto.getSalary())
+                .email(dto.getEmail())
+                .user(user)
+                .build();
+    }
+
+    @Override
+    public EmployeeDto addEmployee(EmployeeDto dto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Employee employee = mapToEntity(dto, user);
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return mapToDto(savedEmployee);
+    }
+
+    @Override
+    public List<EmployeeDto> getAllEmployeesByUser(Long userId) {
+        return employeeRepository.findByUserId(userId).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeDto getEmployeeById(Long id, Long userId) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        if (!employee.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized access to this employee");
+        }
+
+        return mapToDto(employee);
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(Long id, EmployeeDto dto, Long userId) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        if (!employee.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized update attempt");
+        }
+
+        employee.setName(dto.getName());
+        employee.setRole(dto.getRole());
+        employee.setSalary(dto.getSalary());
+        employee.setEmail(dto.getEmail());
+
+        return mapToDto(employeeRepository.save(employee));
+    }
+
+    @Override
+    public void deleteEmployee(Long id, Long userId) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        if (!employee.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized delete attempt");
+        }
+
+        employeeRepository.delete(employee);
+    }
+
+
+}
