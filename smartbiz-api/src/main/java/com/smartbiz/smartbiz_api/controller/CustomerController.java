@@ -2,6 +2,7 @@ package com.smartbiz.smartbiz_api.controller;
 
 import com.smartbiz.smartbiz_api.dto.CustomerDto;
 import com.smartbiz.smartbiz_api.service.CustomerService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,33 +17,38 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
-        CustomerDto created = customerService.createCustomer(customerDto);
-        return ResponseEntity.ok(created);
+    // Get userId from token/session - simplified here
+    private Long getUserId(HttpServletRequest request) {
+        // Replace with your JWT util
+        return (Long) request.getAttribute("userId");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable Long id) {
-        CustomerDto customer = customerService.getCustomerById(id);
-        return ResponseEntity.ok(customer);
+    @PostMapping
+    public ResponseEntity<CustomerDto> saveCustomer(HttpServletRequest request, @RequestBody CustomerDto customerDto) {
+        Long userId = getUserId(request);
+        return ResponseEntity.ok(customerService.saveCustomer(userId, customerDto));
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
-        List<CustomerDto> customers = customerService.getAllCustomers();
-        return ResponseEntity.ok(customers);
+    public ResponseEntity<List<CustomerDto>> getCustomers(HttpServletRequest request) {
+        Long userId = getUserId(request);
+        return ResponseEntity.ok(customerService.getCustomersByUser(userId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto customerDto) {
-        CustomerDto updated = customerService.updateCustomer(id, customerDto);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<CustomerDto> updateCustomer(
+            HttpServletRequest request,
+            @PathVariable Long id,
+            @RequestBody CustomerDto customerDto
+    ) {
+        Long userId = getUserId(request);
+        return ResponseEntity.ok(customerService.updateCustomer(userId, id, customerDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
+    public ResponseEntity<Void> deleteCustomer(HttpServletRequest request, @PathVariable Long id) {
+        Long userId = getUserId(request);
+        customerService.deleteCustomer(userId, id);
         return ResponseEntity.noContent().build();
     }
 

@@ -2,7 +2,9 @@ package com.smartbiz.smartbiz_api.service.impl;
 
 import com.smartbiz.smartbiz_api.dto.CustomerDto;
 import com.smartbiz.smartbiz_api.entity.Customer;
+import com.smartbiz.smartbiz_api.entity.User;
 import com.smartbiz.smartbiz_api.repo.CustomerRepo;
+import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,58 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerRepo customerRepo;
+    private final CustomerRepo customerRepository;
+    private final UserRepo userRepository;
+
+    public CustomerDto saveCustomer(Long userId, CustomerDto customerDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Customer customer = Customer.builder()
+                .name(customerDto.getName())
+                .email(customerDto.getEmail())
+                .phone(customerDto.getPhone())
+                .address(customerDto.getAddress())
+                .user(user)
+                .build();
+
+        Customer saved = customerRepository.save(customer);
+        return mapToDto(saved);
+    }
+
+    public List<CustomerDto> getCustomersByUser(Long userId) {
+        return customerRepository.findByUser_Id(userId)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public CustomerDto updateCustomer(Long userId, Long customerId, CustomerDto customerDto) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        if (!customer.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to update this customer");
+        }
+
+        customer.setName(customerDto.getName());
+        customer.setEmail(customerDto.getEmail());
+        customer.setPhone(customerDto.getPhone());
+        customer.setAddress(customerDto.getAddress());
+
+        return mapToDto(customerRepository.save(customer));
+    }
+
+    public void deleteCustomer(Long userId, Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        if (!customer.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to delete this customer");
+        }
+
+        customerRepository.delete(customer);
+    }
 
     private CustomerDto mapToDto(Customer customer) {
         return CustomerDto.builder()
@@ -26,57 +79,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
-    private Customer mapToEntity(CustomerDto dto) {
-        return Customer.builder()
-                .customerId(dto.getCustomerId())
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .phone(dto.getPhone())
-                .address(dto.getAddress())
-                .build();
-    }
 
-    @Override
-    public CustomerDto createCustomer(CustomerDto customerDto) {
-        Customer customer = mapToEntity(customerDto);
-        Customer saved = customerRepo.save(customer);
-        return mapToDto(saved);
-    }
-
-    @Override
-    public CustomerDto getCustomerById(Long id) {
-        Customer customer = customerRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-        return mapToDto(customer);
-    }
-
-    @Override
-    public List<CustomerDto> getAllCustomers() {
-        return customerRepo.findAll().stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public CustomerDto updateCustomer(Long id, CustomerDto customerDto) {
-        Customer existing = customerRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-
-        existing.setName(customerDto.getName());
-        existing.setEmail(customerDto.getEmail());
-        existing.setPhone(customerDto.getPhone());
-        existing.setAddress(customerDto.getAddress());
-
-        Customer updated = customerRepo.save(existing);
-        return mapToDto(updated);
-    }
-
-    @Override
-    public void deleteCustomer(Long id) {
-        if (!customerRepo.existsById(id)) {
-            throw new RuntimeException("Customer not found with id: " + id);
-        }
-        customerRepo.deleteById(id);
-    }
 
 }
