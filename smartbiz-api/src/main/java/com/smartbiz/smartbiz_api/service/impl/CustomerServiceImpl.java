@@ -19,6 +19,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepo customerRepository;
     private final UserRepo userRepository;
 
+    @Override
     public CustomerDto saveCustomer(Long userId, CustomerDto customerDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -35,6 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
         return mapToDto(saved);
     }
 
+    @Override
     public List<CustomerDto> getCustomersByUser(Long userId) {
         return customerRepository.findByUser_Id(userId)
                 .stream()
@@ -42,6 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public CustomerDto updateCustomer(Long userId, Long customerId, CustomerDto customerDto) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -58,6 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
         return mapToDto(customerRepository.save(customer));
     }
 
+    @Override
     public void deleteCustomer(Long userId, Long customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -67,6 +71,26 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerRepository.delete(customer);
+    }
+
+    @Override
+    public CustomerDto getCustomerById(Long userId, Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        if (!customer.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to access this customer");
+        }
+
+        return mapToDto(customer);
+    }
+
+    @Override
+    public List<CustomerDto> searchCustomersByName(Long userId, String name) {
+        return customerRepository.findByUser_IdAndNameContainingIgnoreCase(userId, name)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
     private CustomerDto mapToDto(Customer customer) {
