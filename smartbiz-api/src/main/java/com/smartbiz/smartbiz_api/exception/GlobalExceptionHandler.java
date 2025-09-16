@@ -2,8 +2,10 @@ package com.smartbiz.smartbiz_api.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -34,6 +36,26 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> handleUnauthorized(UnauthorizedException ex) {
         return body(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String name = ex.getName();
+        String val = ex.getValue() != null ? ex.getValue().toString() : "null";
+        return body(HttpStatus.BAD_REQUEST, "Invalid value '" + val + "' for parameter '" + name + "'");
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<Object> handleNumberFormat(NumberFormatException ex) {
+        return body(HttpStatus.BAD_REQUEST, "Invalid numeric value");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidation(MethodArgumentNotValidException ex) {
+        String msg = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> fe.getField() + ":" + fe.getDefaultMessage())
+                .findFirst().orElse("Validation error");
+        return body(HttpStatus.BAD_REQUEST, msg);
     }
 
     @ExceptionHandler(Exception.class)
