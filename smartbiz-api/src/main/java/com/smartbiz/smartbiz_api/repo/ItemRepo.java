@@ -19,6 +19,8 @@ public interface ItemRepo extends JpaRepository<Item, Long> {
     // get item by itemId and user
     Optional<Item> findByItemIdAndUser_Id(Long itemId, Long userId);
 
+    long countByUser_Id(Long userId);
+
 
 
 

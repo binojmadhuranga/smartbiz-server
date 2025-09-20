@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtAuthInterceptor)
-                .addPathPatterns("/api/customers/**", "/api/items/**", "/api/suppliers/**", "/api/employees/**", "/api/customers/**")
+                .addPathPatterns("/api/customers/**", "/api/items/**", "/api/suppliers/**", "/api/employees/**", "/api/customers/**" , "/api/sales/**" ,"/api/dashboard/**")
                 .excludePathPatterns("/api/auth/**", "/api/public/**"); // adjust to your public endpoints
     }
     @Override

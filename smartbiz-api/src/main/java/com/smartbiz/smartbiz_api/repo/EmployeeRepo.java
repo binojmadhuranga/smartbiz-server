@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface EmployeeRepo extends JpaRepository<Employee, Long> {
 
-    List<Employee> findByUserId(Long userId);
+    List<Employee> findByUser_Id(Long userId);
 
-    List<Employee> findByUserIdAndNameContainingIgnoreCase(Long userId, String name);
+    List<Employee> findByUser_IdAndNameContainingIgnoreCase(Long userId, String name);
+
+    long countByUser_Id(Long userId);
+
 
 }
