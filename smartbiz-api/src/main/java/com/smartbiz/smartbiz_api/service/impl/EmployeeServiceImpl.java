@@ -56,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDto> getAllEmployeesByUser(Long userId) {
-        return employeeRepository.findByUserId(userId).stream()
+        return employeeRepository.findByUser_Id(userId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -94,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDto> searchEmployeesByName(String name, Long userId) {
-        List<Employee> employees = employeeRepository.findByUserIdAndNameContainingIgnoreCase(userId, name);
+        List<Employee> employees = employeeRepository.findByUser_IdAndNameContainingIgnoreCase(userId, name);
         return employees.stream()
                 .map(this::mapToDto)
                 .toList();

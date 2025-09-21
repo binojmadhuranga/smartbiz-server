@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
 
         Item saved = itemRepository.save(item); // save item first to get id
 
-        // update owning side (Supplier.items) so join table rows are created
+
         if (!suppliers.isEmpty()) {
             for (Supplier s : suppliers) {
                 s.getItems().add(saved); // owning side
