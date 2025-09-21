@@ -14,8 +14,6 @@ public interface SupplierRepo extends JpaRepository<Supplier, Long> {
     // New method for search
     List<Supplier> findByUserIdAndNameContainingIgnoreCase(Long userId, String name);
 
-
-
-
+    long countByUserId(Long userId);
 
 }
