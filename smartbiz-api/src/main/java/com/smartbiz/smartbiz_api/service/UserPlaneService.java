@@ -3,7 +3,7 @@ package com.smartbiz.smartbiz_api.service;
 import com.smartbiz.smartbiz_api.entity.PlanType;
 import com.smartbiz.smartbiz_api.entity.User;
 
-public interface UserService {
+public interface UserPlaneService {
 
     User updateUserPlan(Long userId, PlanType planType);
 
