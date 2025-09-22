@@ -71,6 +71,21 @@ public class UserPlanController {
         return ResponseEntity.ok(updatedUser.getId());
     }
 
+    // Admin: update any user's plan by path userId
+    @PutMapping("/users/{userId}/plan")
+    public ResponseEntity<Long> adminUpdateUserPlan(
+            HttpServletRequest request,
+            @PathVariable("userId") Long targetUserId,
+            @RequestBody PlanUpdateRequestDto body
+    ) {
+        String role = getRole(request);
+        if (role == null || !role.equalsIgnoreCase("ADMIN")) {
+            throw new ForbiddenException("Only admins can update other users' plans");
+        }
+        User updated = userPlaneService.updateUserPlan(targetUserId, body.getPlan());
+        return ResponseEntity.ok(updated.getId());
+    }
+
     @PostMapping(path = "/payments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PaymentDto> uploadPayment(
             HttpServletRequest request,
