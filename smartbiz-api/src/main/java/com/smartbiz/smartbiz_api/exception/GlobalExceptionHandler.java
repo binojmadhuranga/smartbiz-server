@@ -6,6 +6,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -61,6 +64,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex) {
         return body(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Object> handleMaxUpload(MaxUploadSizeExceededException ex) {
+        return body(HttpStatus.PAYLOAD_TOO_LARGE, "File too large. Max size: " + ex.getMaxUploadSize());
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<Object> handleMissingPart(MissingServletRequestPartException ex) {
+        return body(HttpStatus.BAD_REQUEST, "Missing required part: " + ex.getRequestPartName());
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<Object> handleMultipart(MultipartException ex) {
+        return body(HttpStatus.BAD_REQUEST, "Invalid multipart request: " + ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
