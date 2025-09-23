@@ -1,6 +1,5 @@
 package com.smartbiz.smartbiz_api.service.impl;
 
-
 import com.smartbiz.smartbiz_api.dto.UserDto;
 import com.smartbiz.smartbiz_api.entity.User;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
@@ -68,7 +67,8 @@ public class UserServiceImpl implements UserService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getPlan()
         );
     }
 
