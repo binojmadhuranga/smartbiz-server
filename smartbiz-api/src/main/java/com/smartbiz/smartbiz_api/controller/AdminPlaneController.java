@@ -1,6 +1,4 @@
 package com.smartbiz.smartbiz_api.controller;
-
-
 import com.smartbiz.smartbiz_api.dto.PlanUpdateRequestDto;
 import com.smartbiz.smartbiz_api.service.AdminPlanService;
 import lombok.RequiredArgsConstructor;
