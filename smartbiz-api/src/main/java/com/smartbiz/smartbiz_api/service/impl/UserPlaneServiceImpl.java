@@ -2,6 +2,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 
 import com.smartbiz.smartbiz_api.entity.PlanType;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.UserPlaneService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,10 @@ public class UserPlaneServiceImpl implements UserPlaneService {
         return userRepo.save(user);
     }
 
-
-
+    @Override
+    public User getUserById(Long userId) {
+        return userRepo.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
 
 }
