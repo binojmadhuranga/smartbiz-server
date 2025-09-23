@@ -33,10 +33,9 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(Long id, UserDto userDto) {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));
-        user.setId(userDto.getId());
+//        user.setId(userDto.getId());
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
-//        user.setPassword(userDto.getPassword());
         user.setRole(userDto.getRole());
 
         User updatedUser = userRepo.save(user);
