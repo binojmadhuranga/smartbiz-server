@@ -8,8 +8,6 @@ import com.smartbiz.smartbiz_api.service.AdminPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,19 +32,7 @@ public class AdminPlanServiceImpl implements AdminPlanService {
                 .build();
     }
 
-    @Override
-    public List<UserResponseDto> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(user -> UserResponseDto.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .email(user.getEmail())
-                        .role(user.getRole())
-                        .plan(user.getPlan())
-                        .build())
-                .collect(Collectors.toList());
-    }
+
 
 
 }
