@@ -16,17 +16,29 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtAuthInterceptor)
-                .addPathPatterns("/api/customers/**", "/api/items/**", "/api/suppliers/**", "/api/employees/**", "/api/customers/**" , "/api/sales/**" ,"/api/dashboard/**", "/api/account/**","/api/users/**")
-                .excludePathPatterns("/api/auth/**", "/api/public/**"); // adjust to your public endpoints
+                .addPathPatterns(
+                        "/api/customers/**",
+                        "/api/items/**",
+                        "/api/suppliers/**",
+                        "/api/employees/**",
+                        "/api/sales/**",
+                        "/api/dashboard/**",
+                        "/api/account/**",
+                        "/api/users/**",
+                        "/api/reports/**"
+                )
+                .excludePathPatterns(
+                        "/api/auth/**",
+                        "/api/public/**"
+                );
     }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")  // allow all /api paths
+        registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:5173") // frontend origin
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
-
-
 }

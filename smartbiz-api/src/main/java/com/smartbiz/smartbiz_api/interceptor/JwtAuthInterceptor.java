@@ -15,8 +15,9 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        // Allow CORS preflight through
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        // Allow CORS preflight and lightweight availability checks through
+        String method = request.getMethod();
+        if ("OPTIONS".equalsIgnoreCase(method) || "HEAD".equalsIgnoreCase(method)) {
             return true;
         }
 
