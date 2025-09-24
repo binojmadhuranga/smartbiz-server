@@ -81,5 +81,31 @@ public class PaymentServiceImpl implements PaymentService {
             throw new RuntimeException("Failed to store file: " + ex.getMessage(), ex);
         }
     }
+
+    @Override
+    public Payment getPaymentById(Long paymentId) {
+        return paymentRepo.findById(paymentId)
+                .orElseThrow(() -> new NotFoundException("Payment not found"));
+    }
+
+
+    @Override
+    public byte[] downloadPaymentFile(Long paymentId) throws Exception {
+        Payment payment = getPaymentById(paymentId);
+        Path filePath = Path.of(payment.getStoragePath());
+        if (!Files.exists(filePath)) {
+            throw new NotFoundException("File not found on server");
+        }
+        return Files.readAllBytes(filePath);
+    }
+
+    @Override
+    public Payment getLatestPaymentByUserId(Long userId) {
+        return paymentRepo.findTopByUser_IdOrderByUploadedAtDesc(userId)
+                .orElseThrow(() -> new NotFoundException("No payment slip found for this user"));
+    }
+
+
+
 }
 
