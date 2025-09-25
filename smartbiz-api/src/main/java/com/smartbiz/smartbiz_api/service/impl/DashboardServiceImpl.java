@@ -29,6 +29,7 @@ public class DashboardServiceImpl implements DashboardService {
             case "daily" -> start = LocalDate.now().atStartOfDay();
             case "weekly" -> start = LocalDate.now().minusDays(7).atStartOfDay();
             case "monthly" -> start = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
+            case "yearly" -> start = LocalDate.now().with(TemporalAdjusters.firstDayOfYear()).atStartOfDay();
             default -> start = LocalDate.now().atStartOfDay(); // fallback daily
         }
 
