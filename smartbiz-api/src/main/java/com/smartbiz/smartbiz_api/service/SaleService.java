@@ -16,5 +16,6 @@ public interface SaleService {
 
     void deleteSale(Long userId, Long saleId);
 
+    List<SaleDto> searchSales(Long userId, String keyword);
 
 }

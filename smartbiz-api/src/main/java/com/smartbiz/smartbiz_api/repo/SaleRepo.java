@@ -17,4 +17,6 @@ public interface SaleRepo extends JpaRepository<Sale, Long> {
                                       @Param("start") LocalDateTime start,
                                       @Param("end") LocalDateTime end);
 
+    List<Sale> findByUserIdAndProductNameContainingIgnoreCase(Long userId, String keyword);
+
 }

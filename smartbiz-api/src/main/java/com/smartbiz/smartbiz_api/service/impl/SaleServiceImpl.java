@@ -96,4 +96,12 @@ public class SaleServiceImpl implements SaleService {
                 .build();
     }
 
+    @Override
+    public List<SaleDto> searchSales(Long userId, String keyword) {
+        return saleRepository.findByUserIdAndProductNameContainingIgnoreCase(userId, keyword)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+    }
 }
