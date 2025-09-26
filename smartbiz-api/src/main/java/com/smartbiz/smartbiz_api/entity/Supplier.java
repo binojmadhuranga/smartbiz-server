@@ -1,6 +1,5 @@
 package com.smartbiz.smartbiz_api.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

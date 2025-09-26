@@ -1,7 +1,6 @@
 package com.smartbiz.smartbiz_api.service;
 
 import com.smartbiz.smartbiz_api.dto.SupplierDto;
-
 import java.util.List;
 
 public interface SupplierService {

@@ -8,7 +8,6 @@ import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
