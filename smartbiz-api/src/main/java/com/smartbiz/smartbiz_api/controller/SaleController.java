@@ -30,8 +30,13 @@ public class SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SaleDto>> getAllSales(HttpServletRequest request) {
+    public ResponseEntity<List<SaleDto>> getAllSales(HttpServletRequest request,
+                                                     @RequestParam(value = "search", required = false) String search) {
         Long userId = getUserId(request);
+
+        if (search != null && !search.isBlank()) {
+            return ResponseEntity.ok(saleService.searchSales(userId, search));
+        }
         return ResponseEntity.ok(saleService.getAllSales(userId));
     }
 
