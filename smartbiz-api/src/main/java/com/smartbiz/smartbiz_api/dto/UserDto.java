@@ -17,8 +17,6 @@ public class UserDto {
     private String role;
     private PlanType plan;
 
-
-    // Added explicit constructor matching usages that don't include password
     public UserDto(Long id, String name, String email, String role,PlanType plan) {
         this.id = id;
         this.name = name;

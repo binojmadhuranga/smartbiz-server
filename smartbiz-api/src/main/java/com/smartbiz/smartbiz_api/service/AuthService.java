@@ -6,7 +6,6 @@ import com.smartbiz.smartbiz_api.dto.UserDto;
 
 public interface AuthService {
 
-
     public String register( UserDto userDto);
     public AuthResponseDto login(AuthDto authDto);
 
