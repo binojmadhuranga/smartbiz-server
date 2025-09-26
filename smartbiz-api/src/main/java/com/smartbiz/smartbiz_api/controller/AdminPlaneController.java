@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController
@@ -27,7 +26,6 @@ public class AdminPlaneController {
             @RequestBody PlanUpdateRequestDto request) {
         return ResponseEntity.ok(adminService.updateUserPlan(userId, request).getId());
     }
-
 
 
     @GetMapping("/users/{userId}/payments/download")

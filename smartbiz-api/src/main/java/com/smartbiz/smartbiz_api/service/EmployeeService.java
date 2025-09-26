@@ -1,7 +1,6 @@
 package com.smartbiz.smartbiz_api.service;
 
 import com.smartbiz.smartbiz_api.dto.EmployeeDto;
-
 import java.util.List;
 
 public interface EmployeeService {

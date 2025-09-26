@@ -8,7 +8,6 @@ import com.smartbiz.smartbiz_api.service.AdminPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 @RequiredArgsConstructor
 @Service
 public class AdminPlanServiceImpl implements AdminPlanService {
