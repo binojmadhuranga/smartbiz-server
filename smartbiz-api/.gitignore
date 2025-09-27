@@ -33,4 +33,11 @@ build/
 .vscode/
 
 ### Config / Secrets ###
-application-*.propertie
+application.properties
+/src/main/resources/application.properties
+/src/main/resources/application.yml
+/src/test/resources/application.properties
+/src/test/resources/application.yml
+
+# Local file storage (do not commit uploaded files)
+/uploads/
