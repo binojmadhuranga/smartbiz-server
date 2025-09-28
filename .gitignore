@@ -1,0 +1,8 @@
+# Ignore uploaded files (but keep directory placeholders)
+/uploads/*
+!/uploads/.gitkeep
+!/uploads/payments/.gitkeep
+
+# Ignore IDE/build at repo root (optional)
+/target/
+.idea/
