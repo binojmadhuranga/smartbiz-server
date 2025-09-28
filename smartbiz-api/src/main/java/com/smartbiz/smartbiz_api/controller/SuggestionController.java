@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
-public class OpenAIController {
+public class SuggestionController {
 
     private final DashboardService dashboardService;
     private final OpenAIService openAIService;
