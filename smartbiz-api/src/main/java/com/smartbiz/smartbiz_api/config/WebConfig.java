@@ -26,7 +26,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/account/**",
                         "/api/users/**",
                         "/api/reports/**",
-                        "/api/ai/**"
+                        "/api/ai/**",
+                        "/api/posts/**"
                 )
                 .excludePathPatterns(
                         "/api/auth/**",
