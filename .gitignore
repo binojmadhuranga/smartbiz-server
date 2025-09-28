@@ -8,7 +8,8 @@
 .idea/
 
 HELP.md
-target/
+# Ignore all module target directories
+**/target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -42,11 +43,8 @@ build/
 .vscode/
 
 ### Config / Secrets ###
-application.properties
-/src/main/resources/application.properties
-/src/main/resources/application.yml
-/src/test/resources/application.properties
-/src/test/resources/application.yml
-
-# Local file storage (do not commit uploaded files)
-/uploads/
+# Ignore Spring config files in any module
+**/src/main/resources/application.properties
+**/src/main/resources/application.yml
+**/src/test/resources/application.properties
+**/src/test/resources/application.yml
