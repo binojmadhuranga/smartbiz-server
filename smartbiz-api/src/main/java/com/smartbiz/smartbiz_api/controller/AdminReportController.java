@@ -1,6 +1,5 @@
 package com.smartbiz.smartbiz_api.controller;
 
-import com.smartbiz.smartbiz_api.dto.AdminReportDto;
 import com.smartbiz.smartbiz_api.service.AdminReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
