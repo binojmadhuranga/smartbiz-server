@@ -1,1 +1,1 @@
-Smart biz backend sucure sever.
+This is fully implemented backend.
