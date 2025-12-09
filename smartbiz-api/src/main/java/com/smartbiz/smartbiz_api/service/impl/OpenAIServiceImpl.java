@@ -41,7 +41,7 @@ public class OpenAIServiceImpl implements OpenAIService {
         );
 
         Map<String, Object> body = new HashMap<>();
-        body.put("model", "gpt-4o-mini");
+        body.put("model", "gpt-4o-mini:ft-binoj-smartbiz");
         body.put("messages", List.of(
                 Map.of("role", "system", "content", "You are an experienced business consultant AI."),
                 Map.of("role", "user", "content", businessData)
