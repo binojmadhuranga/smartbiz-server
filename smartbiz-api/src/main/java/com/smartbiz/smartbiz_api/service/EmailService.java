@@ -4,4 +4,6 @@ public interface EmailService {
 
     void sendWelcomeEmail(String to, String name, String plan);
 
+    void sendOtpEmail(String to, String otp);
+
 }
