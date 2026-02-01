@@ -4,11 +4,13 @@ import com.smartbiz.smartbiz_api.dto.AuthDto;
 import com.smartbiz.smartbiz_api.dto.AuthResponseDto;
 import com.smartbiz.smartbiz_api.dto.UserDto;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.event.UserRegisteredEvent;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.AuthService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import com.smartbiz.smartbiz_api.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public String register(UserDto userDto) {
@@ -33,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole()); // Assuming UserDto has a role field
         userRepo.save(user);
+        eventPublisher.publishEvent(new UserRegisteredEvent(user));
         return "User registered successfully!";
     }
 
