@@ -31,4 +31,24 @@ public class EmailServiceImpl implements EmailService {
 
         mailSender.send(message);
     }
+
+    @Async
+    @Override
+    public void sendOtpEmail(String to, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("SmartBiz Password Reset OTP");
+
+        message.setText(
+                "Your OTP for password reset is:\n\n" +
+                        otp + "\n\n" +
+                        "This OTP is valid for 10 minutes.\n\n" +
+                        "If you didn’t request this, please ignore.\n\n" +
+                        "– SmartBiz Team"
+        );
+
+        mailSender.send(message);
+    }
+
+
 }

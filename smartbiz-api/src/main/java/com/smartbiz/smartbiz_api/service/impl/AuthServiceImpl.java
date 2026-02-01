@@ -1,17 +1,22 @@
 package com.smartbiz.smartbiz_api.service.impl;
 
-import com.smartbiz.smartbiz_api.dto.AuthDto;
-import com.smartbiz.smartbiz_api.dto.AuthResponseDto;
-import com.smartbiz.smartbiz_api.dto.UserDto;
+import com.smartbiz.smartbiz_api.dto.*;
+import com.smartbiz.smartbiz_api.entity.PasswordResetOtp;
 import com.smartbiz.smartbiz_api.entity.User;
 import com.smartbiz.smartbiz_api.event.UserRegisteredEvent;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.AuthService;
+import com.smartbiz.smartbiz_api.service.EmailService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
+import com.smartbiz.smartbiz_api.util.OtpUtil;
 import com.smartbiz.smartbiz_api.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import com.smartbiz.smartbiz_api.repo.PasswordResetOtpRepo;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -24,6 +29,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private PasswordResetOtpRepo passwordResetOtpRepo;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public String register(UserDto userDto) {
@@ -53,10 +64,62 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid password");
         }
         // Generate JWT token
-        String token = jwtUtil.generateToken(user.getId(),user.getEmail(), user.getRole());
-        return new AuthResponseDto(token, user.getRole(),user.getName());
+        String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole());
+        return new AuthResponseDto(token, user.getRole(), user.getName());
 
     }
+
+
+    @Transactional
+    @Override
+    public String forgotPassword(ForgotPasswordDto dto) {
+
+        User user = userRepo.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Remove old OTPs for safety
+        passwordResetOtpRepo.deleteByEmail(user.getEmail());
+
+        String otp = OtpUtil.generateOtp();
+
+        PasswordResetOtp resetOtp = PasswordResetOtp.builder()
+                .email(user.getEmail())
+                .otp(otp)
+                .expiryTime(LocalDateTime.now().plusMinutes(10))
+                .build();
+
+        passwordResetOtpRepo.save(resetOtp);
+
+        // Send OTP via email (async)
+        emailService.sendOtpEmail(user.getEmail(), otp);
+
+        return "OTP sent to registered email";
+    }
+
+    @Transactional
+    @Override
+    public String resetPassword(ResetPasswordDto dto) {
+
+        PasswordResetOtp resetOtp = passwordResetOtpRepo
+                .findByEmailAndOtp(dto.getEmail(), dto.getOtp())
+                .orElseThrow(() -> new RuntimeException("Invalid OTP"));
+
+        if (resetOtp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP expired");
+        }
+
+        User user = userRepo.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(PasswordUtil.hash(dto.getNewPassword()));
+        userRepo.save(user);
+
+        // Delete OTP after successful reset
+        passwordResetOtpRepo.deleteByEmail(dto.getEmail());
+
+        return "Password reset successfully";
+    }
+
 
 }
 
