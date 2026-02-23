@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.PaymentDto;
 import com.smartbiz.smartbiz_api.entity.Payment;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.BadRequestException;
 import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.PaymentRepo;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
@@ -31,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDto uploadPayment(Long userId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("No file uploaded");
+            throw new BadRequestException("No file uploaded");
         }
 
         User user = userRepo.findById(userId)

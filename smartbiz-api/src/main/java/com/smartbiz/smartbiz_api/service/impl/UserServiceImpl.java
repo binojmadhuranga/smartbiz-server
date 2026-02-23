@@ -2,6 +2,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 
 import com.smartbiz.smartbiz_api.dto.UserDto;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +25,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
         return mapToDto(user);
     }
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
-//        user.setId(userDto.getId());
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         if (!userRepo.existsById(id)) {
-            throw new RuntimeException("User not found with id " + id);
+            throw new NotFoundException("User not found with id " + id);
         }
         userRepo.deleteById(id);
     }
