@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.PlanUpdateRequestDto;
 import com.smartbiz.smartbiz_api.dto.UserResponseDto;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.AdminPlanService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class AdminPlanServiceImpl implements AdminPlanService {
     @Override
     public UserResponseDto updateUserPlan(Long userId, PlanUpdateRequestDto request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         user.setPlan(request.getPlan());
         User updatedUser = userRepository.save(user);

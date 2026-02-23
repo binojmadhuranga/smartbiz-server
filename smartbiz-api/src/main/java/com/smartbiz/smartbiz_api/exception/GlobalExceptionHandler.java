@@ -51,6 +51,11 @@ public class GlobalExceptionHandler {
         return body(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<Object> handleFileStorage(FileStorageException ex) {
+        return body(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String name = ex.getName();
