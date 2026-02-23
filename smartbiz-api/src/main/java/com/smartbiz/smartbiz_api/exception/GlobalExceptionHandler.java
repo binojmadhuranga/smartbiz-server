@@ -83,6 +83,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneric(Exception ex) {
-        return body(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return body(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
+
+
 }
