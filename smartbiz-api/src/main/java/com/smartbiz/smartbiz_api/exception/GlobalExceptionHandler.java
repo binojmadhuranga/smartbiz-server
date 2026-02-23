@@ -86,5 +86,9 @@ public class GlobalExceptionHandler {
         return body(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequest(BadRequestException ex) {
+        return body(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 
 }

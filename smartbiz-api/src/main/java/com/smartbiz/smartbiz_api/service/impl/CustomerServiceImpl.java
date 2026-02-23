@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.CustomerDto;
 import com.smartbiz.smartbiz_api.entity.Customer;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.CustomerRepo;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.CustomerService;
@@ -46,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto updateCustomer(Long userId, Long customerId, CustomerDto customerDto) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         if (!customer.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized to update this customer");
@@ -63,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(Long userId, Long customerId) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         if (!customer.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized to delete this customer");
@@ -75,7 +76,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto getCustomerById(Long userId, Long customerId) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         if (!customer.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized to access this customer");

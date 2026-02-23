@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.controller;
 import com.smartbiz.smartbiz_api.dto.*;
 import com.smartbiz.smartbiz_api.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +16,10 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public String register(@RequestBody UserDto userDto) {
-        return authService.register(userDto);
+    public ResponseEntity<String> register(@RequestBody UserDto userDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authService.register(userDto));
     }
 
     @PostMapping("/login")
