@@ -3,11 +3,15 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.SupplierDto;
 import com.smartbiz.smartbiz_api.entity.Item;
 import com.smartbiz.smartbiz_api.entity.Supplier;
+import com.smartbiz.smartbiz_api.exception.BadRequestException;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.ItemRepo;
 import com.smartbiz.smartbiz_api.repo.SupplierRepo;
 import com.smartbiz.smartbiz_api.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
@@ -58,17 +62,18 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public SupplierDto createSupplier(SupplierDto supplierDto) {
         if (supplierDto.getUserId() == null) {
-            throw new IllegalArgumentException("UserId must be provided");
+            throw new BadRequestException("UserId must be provided");
         }
 
         Supplier supplier = mapToEntity(supplierDto);
 
         if (supplierDto.getItemIds() != null && !supplierDto.getItemIds().isEmpty()) {
             Set<Item> items = new HashSet<>(itemRepo.findAllById(supplierDto.getItemIds()));
-            supplier.setItems(items); // owning side
+
+            supplier.setItems(items);
         }
 
         Supplier savedSupplier = supplierRepo.save(supplier);
@@ -77,15 +82,15 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public SupplierDto getSupplierById(Long id) {
         Supplier supplier = supplierRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                .orElseThrow(() -> new NotFoundException("Supplier not found"));
         return mapToDto(supplier);
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<SupplierDto> getAllSuppliers() {
         return supplierRepo.findAll()
                 .stream()
@@ -94,7 +99,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<SupplierDto> getSuppliersByUserId(Long userId) {
         return supplierRepo.findByUserId(userId)
                 .stream()
@@ -103,10 +108,10 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional(readOnly = true)
     public SupplierDto updateSupplier(Long id, SupplierDto supplierDto) {
         Supplier existingSupplier = supplierRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                .orElseThrow(() -> new NotFoundException("Supplier not found"));
 
         existingSupplier.setName(supplierDto.getName());
         existingSupplier.setEmail(supplierDto.getEmail());
@@ -127,7 +132,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<SupplierDto> searchSuppliersByName(Long userId, String name) {
         List<Supplier> suppliers = supplierRepo.findByUserIdAndNameContainingIgnoreCase(userId, name);
         return suppliers.stream()
@@ -138,7 +143,7 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional(readOnly = true)
     public void deleteSupplier(Long id) {
         supplierRepo.deleteById(id);
     }

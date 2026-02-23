@@ -16,7 +16,7 @@ public class UserPlaneServiceImpl implements UserPlaneService {
 
     public User updateUserPlan(Long userId, PlanType planType) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         user.setPlan(planType);
         return userRepo.save(user);
     }

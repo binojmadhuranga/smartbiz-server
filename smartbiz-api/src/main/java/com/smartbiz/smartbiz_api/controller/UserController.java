@@ -1,6 +1,7 @@
 package com.smartbiz.smartbiz_api.controller;
 
 import com.smartbiz.smartbiz_api.dto.UserDto;
+import com.smartbiz.smartbiz_api.exception.UnauthorizedException;
 import com.smartbiz.smartbiz_api.service.UserService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public class UserController {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        throw new RuntimeException("JWT Token is missing");
+        throw new UnauthorizedException("JWT Token is missing");
     }
 
 

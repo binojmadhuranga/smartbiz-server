@@ -4,6 +4,9 @@ import com.smartbiz.smartbiz_api.dto.*;
 import com.smartbiz.smartbiz_api.entity.PasswordResetOtp;
 import com.smartbiz.smartbiz_api.entity.User;
 import com.smartbiz.smartbiz_api.event.UserRegisteredEvent;
+import com.smartbiz.smartbiz_api.exception.BadRequestException;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
+import com.smartbiz.smartbiz_api.exception.UnauthorizedException;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.AuthService;
 import com.smartbiz.smartbiz_api.service.EmailService;
@@ -39,8 +42,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String register(UserDto userDto) {
         String hashedPassword = PasswordUtil.hash(userDto.getPassword());
+
         if (userRepo.findByEmail(userDto.getEmail()).isPresent()) {
-            return "Email already registered!";
+            throw new BadRequestException("Email already registered");
         }
 
         User user = new User();
@@ -55,13 +59,13 @@ public class AuthServiceImpl implements AuthService {
 
     public AuthResponseDto login(AuthDto request) {
         User user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
 
         boolean passwordMatch = PasswordUtil.matches(request.getPassword(), user.getPassword());
 
         if (!passwordMatch) {
-            throw new RuntimeException("Invalid password");
+            throw new UnauthorizedException("Invalid credentials");
         }
         // Generate JWT token
         String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole());
@@ -69,13 +73,12 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-
     @Transactional
     @Override
     public String forgotPassword(ForgotPasswordDto dto) {
 
         User user = userRepo.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->   new NotFoundException("User not found"));
 
         // Remove old OTPs for safety
         passwordResetOtpRepo.deleteByEmail(user.getEmail());
@@ -102,14 +105,14 @@ public class AuthServiceImpl implements AuthService {
 
         PasswordResetOtp resetOtp = passwordResetOtpRepo
                 .findByEmailAndOtp(dto.getEmail(), dto.getOtp())
-                .orElseThrow(() -> new RuntimeException("Invalid OTP"));
+                .orElseThrow(() -> new BadRequestException("Invalid OTP"));
 
         if (resetOtp.getExpiryTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP expired");
+            throw new BadRequestException("OTP expired");
         }
 
         User user = userRepo.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         user.setPassword(PasswordUtil.hash(dto.getNewPassword()));
         userRepo.save(user);
