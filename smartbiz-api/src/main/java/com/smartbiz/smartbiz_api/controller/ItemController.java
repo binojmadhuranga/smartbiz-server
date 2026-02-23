@@ -2,6 +2,8 @@ package com.smartbiz.smartbiz_api.controller;
 
 import com.smartbiz.smartbiz_api.dto.ItemDto;
 import com.smartbiz.smartbiz_api.dto.SupplierDto; // added
+import com.smartbiz.smartbiz_api.exception.ForbiddenException;
+import com.smartbiz.smartbiz_api.exception.UnauthorizedException;
 import com.smartbiz.smartbiz_api.service.ItemService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,12 +24,12 @@ public class ItemController {
     private Long getUserId(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Missing or invalid Authorization header");
+            throw new UnauthorizedException("Missing or invalid Authorization header");
         }
         String token = authHeader.substring(7);
         Long userId = jwtUtil.extractUserId(token);
         if (userId == null) {
-            throw new RuntimeException("Invalid token or userId not found");
+            throw new UnauthorizedException("Invalid token or userId not found");
         }
         return userId;
     }
@@ -73,7 +75,7 @@ public class ItemController {
         // Optional: validate that the logged-in user is allowed to see this user's items
         Long loggedInUserId = getUserId(request); // extract from JWT
         if (!loggedInUserId.equals(userId)) {
-            return ResponseEntity.status(403).build(); // Forbidden
+            throw new ForbiddenException("Access denied"); // Forbidden
         }
 
         List<ItemDto> items = itemService.getAllItems(userId);

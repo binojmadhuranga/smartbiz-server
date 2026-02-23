@@ -3,6 +3,8 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.SaleDto;
 import com.smartbiz.smartbiz_api.entity.Sale;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.ForbiddenException;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.SaleRepo;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.SaleService;
@@ -23,7 +25,7 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public SaleDto createSale(Long userId, SaleDto saleDto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Sale sale = Sale.builder()
                 .productName(saleDto.getProductName())
@@ -47,10 +49,10 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public SaleDto getSaleById(Long userId, Long saleId) {
         Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("Sale not found"));
+                .orElseThrow(() -> new NotFoundException("Sale not found"));
 
         if (!sale.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized access");
+            throw new ForbiddenException("Unauthorized access");
         }
         return mapToDto(sale);
     }
@@ -58,10 +60,10 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public SaleDto updateSale(Long userId, Long saleId, SaleDto saleDto) {
         Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("Sale not found"));
+                .orElseThrow(() -> new NotFoundException("Sale not found"));
 
         if (!sale.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized access");
+            throw new ForbiddenException("Unauthorized access");
         }
 
         sale.setProductName(saleDto.getProductName());
@@ -75,10 +77,10 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public void deleteSale(Long userId, Long saleId) {
         Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("Sale not found"));
+                .orElseThrow(() -> new NotFoundException("Sale not found"));
 
         if (!sale.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized access");
+            throw new ForbiddenException("Unauthorized access");
         }
 
         saleRepository.delete(sale);

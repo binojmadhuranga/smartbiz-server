@@ -32,13 +32,11 @@ public class DashboardServiceImpl implements DashboardService {
             default -> start = LocalDate.now().atStartOfDay(); // fallback daily
         }
 
-        // ✅ User-specific counts
         long customerCount = customerRepository.countByUser_Id(userId);
         long supplierCount = supplierRepository.countByUserId(userId);
         long productCount = productRepository.countByUser_Id(userId);
         long employeeCount = employeeRepository.countByUser_Id(userId);
 
-        // ✅ User-specific sales sum
         Double totalSales = saleRepository.getTotalSalesBetweenByUser(userId, start, end);
         if (totalSales == null) totalSales = 0.0;
 

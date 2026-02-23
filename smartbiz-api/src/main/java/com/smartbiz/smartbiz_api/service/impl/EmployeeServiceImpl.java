@@ -3,6 +3,8 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.smartbiz.smartbiz_api.dto.EmployeeDto;
 import com.smartbiz.smartbiz_api.entity.Employee;
 import com.smartbiz.smartbiz_api.entity.User;
+import com.smartbiz.smartbiz_api.exception.ForbiddenException;
+import com.smartbiz.smartbiz_api.exception.NotFoundException;
 import com.smartbiz.smartbiz_api.repo.EmployeeRepo;
 import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.EmployeeService;
@@ -45,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto addEmployee(EmployeeDto dto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Employee employee = mapToEntity(dto, user);
         Employee savedEmployee = employeeRepository.save(employee);
@@ -63,10 +65,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto getEmployeeById(Long id, Long userId) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
 
         if (!employee.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized access to this employee");
+            throw new ForbiddenException("Unauthorized access to this employee");
         }
 
         return mapToDto(employee);
@@ -75,10 +77,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto updateEmployee(Long id, EmployeeDto dto, Long userId) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
 
         if (!employee.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized update attempt");
+            throw new ForbiddenException("Unauthorized update attempt");
         }
 
         employee.setName(dto.getName());
@@ -104,10 +106,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Long id, Long userId) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
 
         if (!employee.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized delete attempt");
+            throw new ForbiddenException("Unauthorized delete attempt");
         }
 
         employeeRepository.delete(employee);

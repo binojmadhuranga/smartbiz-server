@@ -3,6 +3,7 @@ package com.smartbiz.smartbiz_api.service.impl;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 import com.smartbiz.smartbiz_api.dto.DashboardDto;
+import com.smartbiz.smartbiz_api.exception.InternalServerException;
 import com.smartbiz.smartbiz_api.service.DashboardService;
 import com.smartbiz.smartbiz_api.service.ReportService;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class ReportServiceImpl implements ReportService {
 
             document.close();
         } catch (Exception e) {
-            throw new RuntimeException("Error generating PDF report", e);
+            throw new InternalServerException("Error generating PDF report");
         }
         return baos.toByteArray();
     }
