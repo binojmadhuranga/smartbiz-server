@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepo supplierRepo;
@@ -62,7 +63,7 @@ public class SupplierServiceImpl implements SupplierService {
 
 
     @Override
-    @Transactional
+
     public SupplierDto createSupplier(SupplierDto supplierDto) {
         if (supplierDto.getUserId() == null) {
             throw new BadRequestException("UserId must be provided");

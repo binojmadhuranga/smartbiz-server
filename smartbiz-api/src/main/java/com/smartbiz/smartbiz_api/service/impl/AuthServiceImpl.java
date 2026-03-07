@@ -13,7 +13,7 @@ import com.smartbiz.smartbiz_api.service.EmailService;
 import com.smartbiz.smartbiz_api.util.JwtUtil;
 import com.smartbiz.smartbiz_api.util.OtpUtil;
 import com.smartbiz.smartbiz_api.util.PasswordUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import com.smartbiz.smartbiz_api.repo.PasswordResetOtpRepo;
@@ -22,24 +22,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserRepo userRepo;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
-    private PasswordResetOtpRepo passwordResetOtpRepo;
-
-    @Autowired
-    private EmailService emailService;
+    private final UserRepo userRepo;
+    private final JwtUtil jwtUtil;
+    private final ApplicationEventPublisher eventPublisher;
+    private final PasswordResetOtpRepo passwordResetOtpRepo;
+    private final EmailService emailService;
 
     @Override
+    @Transactional
     public String register(UserDto userDto) {
         String hashedPassword = PasswordUtil.hash(userDto.getPassword());
 
@@ -57,6 +50,8 @@ public class AuthServiceImpl implements AuthService {
         return "User registered successfully!";
     }
 
+    @Transactional(readOnly = true)
+    @Override
     public AuthResponseDto login(AuthDto request) {
         User user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException("User not found"));

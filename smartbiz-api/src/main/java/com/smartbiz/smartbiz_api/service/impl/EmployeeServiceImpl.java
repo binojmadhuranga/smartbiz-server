@@ -10,11 +10,14 @@ import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepo employeeRepository;
@@ -56,6 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmployeeDto> getAllEmployeesByUser(Long userId) {
         return employeeRepository.findByUser_Id(userId).stream()
                 .map(this::mapToDto)
@@ -63,6 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EmployeeDto getEmployeeById(Long id, Long userId) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Employee not found"));
@@ -94,6 +99,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmployeeDto> searchEmployeesByName(String name, Long userId) {
         List<Employee> employees = employeeRepository.findByUser_IdAndNameContainingIgnoreCase(userId, name);
         return employees.stream()
