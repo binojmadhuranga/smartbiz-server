@@ -40,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private EmailService emailService;
 
     @Override
+    @Transactional
     public String register(UserDto userDto) {
         String hashedPassword = PasswordUtil.hash(userDto.getPassword());
 
@@ -57,6 +58,8 @@ public class AuthServiceImpl implements AuthService {
         return "User registered successfully!";
     }
 
+    @Transactional(readOnly = true)
+    @Override
     public AuthResponseDto login(AuthDto request) {
         User user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException("User not found"));
