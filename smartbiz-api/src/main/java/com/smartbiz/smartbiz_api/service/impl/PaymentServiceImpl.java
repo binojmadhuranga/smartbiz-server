@@ -12,6 +12,7 @@ import com.smartbiz.smartbiz_api.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepo paymentRepo;
@@ -84,6 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Payment getPaymentById(Long paymentId) {
         return paymentRepo.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Payment not found"));
@@ -101,6 +104,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Payment getLatestPaymentByUserId(Long userId) {
         return paymentRepo.findTopByUser_IdOrderByUploadedAtDesc(userId)
                 .orElseThrow(() -> new NotFoundException("No payment slip found for this user"));
