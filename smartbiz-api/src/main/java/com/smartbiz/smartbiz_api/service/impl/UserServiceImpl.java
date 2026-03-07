@@ -7,22 +7,27 @@ import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepo.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id " + id));

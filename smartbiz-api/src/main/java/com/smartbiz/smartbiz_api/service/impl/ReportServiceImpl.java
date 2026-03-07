@@ -8,11 +8,14 @@ import com.smartbiz.smartbiz_api.service.DashboardService;
 import com.smartbiz.smartbiz_api.service.ReportService;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReportServiceImpl implements ReportService {
 
     private final DashboardService dashboardService;
