@@ -10,6 +10,8 @@ import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SaleServiceImpl implements SaleService {
 
     private final SaleRepo saleRepository;
@@ -40,6 +43,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SaleDto> getAllSales(Long userId) {
         return saleRepository.findByUser_Id(userId).stream()
                 .map(this::mapToDto)
@@ -47,6 +51,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SaleDto getSaleById(Long userId, Long saleId) {
         Sale sale = saleRepository.findById(saleId)
                 .orElseThrow(() -> new NotFoundException("Sale not found"));

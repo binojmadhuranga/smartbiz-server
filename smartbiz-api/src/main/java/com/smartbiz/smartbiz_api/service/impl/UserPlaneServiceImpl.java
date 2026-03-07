@@ -7,9 +7,11 @@ import com.smartbiz.smartbiz_api.repo.UserRepo;
 import com.smartbiz.smartbiz_api.service.UserPlaneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserPlaneServiceImpl implements UserPlaneService {
 
     private final UserRepo userRepo;
@@ -22,6 +24,7 @@ public class UserPlaneServiceImpl implements UserPlaneService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(Long userId) {
         return userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));

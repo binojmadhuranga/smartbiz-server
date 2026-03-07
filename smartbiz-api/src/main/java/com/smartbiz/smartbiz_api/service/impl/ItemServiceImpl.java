@@ -24,6 +24,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepo itemRepository;
@@ -31,7 +32,7 @@ public class ItemServiceImpl implements ItemService {
     private final SupplierRepo supplierRepo;
 
     @Override
-    @Transactional
+
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -58,6 +59,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getAllItems(Long userId) {
         return itemRepository.findByUser_Id(userId)
                 .stream()
@@ -66,6 +68,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getItemById(Long itemId, Long userId) {
         Item item = itemRepository.findByItemIdAndUser_Id(itemId, userId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
@@ -74,7 +77,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public ItemDto updateItem(Long itemId, ItemDto itemDto, Long userId) {
         Item existingItem = itemRepository.findByItemIdAndUser_Id(itemId, userId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
@@ -106,7 +108,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public void deleteItem(Long itemId, Long userId) {
         Item existingItem = itemRepository.findByItemIdAndUser_Id(itemId, userId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
